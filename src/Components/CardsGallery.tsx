@@ -50,7 +50,7 @@ const CardsGallery: React.FC = () => {
                     <ListGroup.Item>{vehicle.gas}</ListGroup.Item>
                 </ListGroup>
                 <Card.Body>
-                    <Card.Link href="/vehicles">See more</Card.Link>
+                    <Card.Link href="/booking">Book Now</Card.Link>
                 </Card.Body>
                 </Card>
             </Col>
