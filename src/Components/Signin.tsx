@@ -1,56 +1,64 @@
-import Form from 'react-bootstrap/Form';
 import React, { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 
 const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+
     try {
       const response = await axios.post('http://localhost:3001/login', {
-        email: email,
-        password_user: password,
+        email,
+        password,
       });
 
-
-      if (response.data.existeUsuario) {
-        console.log('¡El usuario existe en la base de datos!');
-
+      if (response.data.uservalid) {
+        // Aquí puedes redirigir al usuario a otra página o realizar acciones después del inicio de sesión exitoso
+        console.log('Inicio de sesión exitoso');
       } else {
-        console.log('El usuario no existe en la base de datos o las credenciales son incorrectas.');
-
+        setError('Credenciales inválidas');
       }
     } catch (error) {
-      console.error('Error al verificar el usuario:', error);
-
+      console.error('Error al iniciar sesión:', error);
+      setError('Error al iniciar sesión');
     }
   };
 
   return (
-    <div>
-      <Form>
-        <Form.Group className="mb-3" controlId="formGroupEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control value={email} type="email" placeholder="Enter email" />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="formGroupPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control value={password} type="text" placeholder="Password" />
-        </Form.Group>
-        <Form.Group>
-          <button onClick={handleLogin}>Sign In</button>
-        </Form.Group>
-      </Form>
-      
-    </div>
+    <Form onSubmit={handleLogin}>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Email</Form.Label>
+        <Form.Control
+          type="email"
+          placeholder="Ingrese su email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Label>Contraseña</Form.Label>
+        <Form.Control
+          type="password"
+          placeholder="Ingrese su contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </Form.Group>
+
+      <Button variant="primary" type="submit">
+        Iniciar Sesión
+      </Button>
+
+      {error && <p className="mt-3 text-danger">{error}</p>}
+    </Form>
   );
 };
 
 export default Signin;
-
-
-
-
-
-
