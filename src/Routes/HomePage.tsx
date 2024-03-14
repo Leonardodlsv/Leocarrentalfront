@@ -1,5 +1,5 @@
 import Carousell from "../Components/Carousels";
-import Cards from "../Components/Cards";
+import CardsGallery from "../Components/CardsGallery";
 <link rel="stylesheet" href="../styles/Homepage.css" type="text/css" />
 
 export default function HomePage() {
@@ -7,7 +7,7 @@ export default function HomePage() {
         <>
             <Carousell />
             <h2 className="text-center display-1">Some vehicles of our storage</h2>
-            <Cards/>
+            <CardsGallery/>
         </>
         
     )

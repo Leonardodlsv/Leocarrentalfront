@@ -14,8 +14,6 @@ export default function NavBar() {
                     <Nav.Link as={Link} to="/" >Home</Nav.Link>
                     <Nav.Link as={Link} to="/vehicles">Vehicles</Nav.Link>
                     <Nav.Link as={Link} to="/support">Support</Nav.Link>
-                    <Nav.Link as={Link} to="/signin">SignIn</Nav.Link>
-                    <Nav.Link as={Link} to="/signup">SignUp</Nav.Link>
             
                 </Nav>
                 </Navbar.Collapse>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { Row, Col, Card, ListGroup } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 interface Vehicle {
     id: number;
@@ -20,10 +21,10 @@ const CardsGallery: React.FC = () => {
     useEffect(() => {
         const getVehicles = async () => {
         try {
-            const response: AxiosResponse<Vehicle[]> = await axios.get<Vehicle[]>('http://localhost:3001/vehicles');
+            const response: AxiosResponse<Vehicle[]> = await axios.get<Vehicle[]>('http://localhost:3001/vehicle');
             setVehicles(response.data);
         } catch (error) {
-            console.error('Error al obtener vehículos:', error);
+            console.error('Error to get vehicles:', error);
         }
     };
 
@@ -35,8 +36,8 @@ const CardsGallery: React.FC = () => {
         <Row xs={1} md={2} lg={3} className="g-3">
         {vehicles.map((vehicle: Vehicle) => (
             <Col style={{ padding: '3rem'}} key={vehicle.id}>
-                <Card style={{ width: '25rem'}}>
-                <Card.Img variant="top" src={vehicle.image} style={{ width: '100%', height: 'auto' }} />
+                <Card style={{ width: '20rem'}}>
+                <Card.Img variant="top" src={vehicle.image} style={{ width: 'auto', height: '200px' }} />
                 <Card.Body>
                     <Card.Title>{vehicle.brand}, {vehicle.model}, {vehicle.year}</Card.Title>
                     <Card.Text>
@@ -50,7 +51,7 @@ const CardsGallery: React.FC = () => {
                     <ListGroup.Item>{vehicle.gas}</ListGroup.Item>
                 </ListGroup>
                 <Card.Body>
-                    <Card.Link href="/booking">Book Now</Card.Link>
+                <Link to={`/booking?vehicle=${vehicle.id}`} className="btn btn-primary">Book Now</Link>
                 </Card.Body>
                 </Card>
             </Col>

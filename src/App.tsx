@@ -1,8 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./Routes/HomePage";
-import SignIn from "./Routes/SignIn";
-import SignUp from "./Routes/SignUp";
-import User from "./Routes/User";
 import Vehicles from "./Routes/Vehicles";
 import Booking from "./Routes/Booking";
 import Support from "./Routes/Support";
@@ -19,9 +16,6 @@ export default function App() {
       <NavBar/>
         <Routes>
           <Route path="/" element={<HomePage />}/>
-          <Route path="/signin" element={<SignIn />}/>
-          <Route path="/signup" element={<SignUp />}/>
-          <Route path="/user" element={<User />}/>
           <Route path="/vehicles" element={<Vehicles />}/>
           <Route path="/booking" element={<Booking />}/>
           <Route path="/support" element={<Support />}/>
