@@ -2,11 +2,13 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import React, { ChangeEvent, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 function Bookingpost() {
 
-    const { vehicles } = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const id_vehicles = queryParams.get('vehicle');
 
 
     const [formData, setFormData] = useState({
@@ -22,7 +24,7 @@ function Bookingpost() {
         hour_in: '',
         date_out: '',
         hour_out: '',
-        id_vehicles: vehicles,
+        id_vehicles: Number(id_vehicles),
     });
 
     
@@ -57,7 +59,7 @@ function Bookingpost() {
             hour_in: '',
             date_out: '',
             hour_out: '',
-            id_vehicles: vehicles,
+            id_vehicles: Number(id_vehicles),
         });
         })
         .catch(error => {
@@ -68,9 +70,12 @@ function Bookingpost() {
     }
 
     return (
+
+        
         
         <Form className="m-5" onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="email">
+        
+        <Form.Group className="mb-3" controlId="email"> 
             <Form.Label>Email address</Form.Label>
             <Form.Control type="string" placeholder="Enter email" onChange={handleOnChange} name='email' value={formData.email} />
             <Form.Text className="text-muted">
