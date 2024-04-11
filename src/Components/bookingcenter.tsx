@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -13,8 +13,8 @@ function GetBook (){
         date_out: string;
         airport: string;
         airline: string;
-        hourin: string;
-        hourout: string;
+        hour_in: string;
+        hour_out: string;
         no_flight: string;
         id_vehicles: number;  
     }
@@ -33,8 +33,35 @@ function GetBook (){
     const [errorMessage, setErrorMessage] = useState('');
     const [vehicles, setVehicles] = useState<Vehicles | null>(null);
 
+    const [formData, setFormData] = useState({
+        email: '',
+        full_name: '',
+        country: '',
+        id_passport: '',
+        phone_number: '',
+        airport: '',
+        airline: '',
+        no_flight: '',
+        date_in: '',
+        hour_in: '',
+        date_out: '',
+        hour_out: '',
+    });
+    
+
+
+    
+
     const handleIdPassportChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIdPassport(e.target.value);
+    };
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
     };
 
 
@@ -46,10 +73,37 @@ function GetBook (){
             setBooking(response.data);
             setErrorMessage('');
             setVehicles(response.data.vehicles);
+            setFormData(response.data);
         } catch (error) {
             setBooking(null);
             setVehicles(null);
             setErrorMessage('No se pudo encontrar la reserva.');
+        }
+    };
+    
+    const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+    
+        try {
+            const response = await axios.patch(`http://localhost:3001/booking/update/${id_passport}`, formData);
+            console.log('Reserva actualizada exitosamente:', response.data);
+            setBooking(response.data);
+        } catch (error) {
+            console.error('No se pudo actualizar la reserva.', error);
+        }
+    };
+
+    
+    
+    const handleDelete: React.MouseEventHandler<HTMLButtonElement> = async (event) => {
+        event.preventDefault();
+    
+        try {
+            await axios.delete(`http://localhost:3001/booking/delete/${id_passport}`);
+            console.log('Reserva eliminada exitosamente')
+
+        } catch (error) {
+            setErrorMessage('No se pudo eliminar la reserva');
         }
     };
     
@@ -63,6 +117,7 @@ function GetBook (){
                         <Form.Group controlId="id_passport">
                             <Form.Label>ID o Pasaporte:</Form.Label>
                             <Form.Control
+                                name='id_passport'
                                 type="text"
                                 placeholder="Ingrese el ID o Pasaporte"
                                 value={id_passport}
@@ -73,61 +128,76 @@ function GetBook (){
                             Consultar Reserva
                         </Button>
                     </Form>
+                    <br />
+
                     {errorMessage && <p>{errorMessage}</p>}
                 </Col>
             </Row>
             {booking && (
                 <>
+                <Form onSubmit={handleUpdate}>
                 <Form.Group className="mb-3" controlId="full_name">
                     <Form.Label>Full Name</Form.Label>
-                    <Form.Control type="text" value={booking.full_name} />
+                    <Form.Control name='full_name' type="text" value={formData.full_name} />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="email">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" value={booking.email} />
+                    <Form.Control name='email' type="email" value={formData.email} onChange={handleChange} />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="country">
                     <Form.Label>Country</Form.Label>
-                    <Form.Control type="text" value={booking.country} />
+                    <Form.Control name='country' type="text" value={formData.country} onChange={handleChange} />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="phone_number">
                     <Form.Label>Phone Number</Form.Label>
-                    <Form.Control type="text" value={booking.phone_number} />
+                    <Form.Control name='phone_number' type="text" value={formData.phone_number} onChange={handleChange}/>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="date_in">
                     <Form.Label>Date In</Form.Label>
-                    <Form.Control type="text" value={booking.date_in} />
+                    <Form.Control name='date_in' type="text" value={formData.date_in} onChange={handleChange} />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="hourin">
                     <Form.Label>Hour In</Form.Label>
-                    <Form.Control type="text" value={booking.hourin} />
+                    <Form.Control name='hour_in' type="text" value={formData.hour_in} onChange={handleChange} />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="date_out">
                     <Form.Label>Date Out</Form.Label>
-                    <Form.Control type="text" value={booking.date_out} />
+                    <Form.Control name='date_out' type="text" value={formData.date_out} onChange={handleChange}/>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="hourout">
                     <Form.Label>Hour Out</Form.Label>
-                    <Form.Control type="text" value={booking.hourout} />
+                    <Form.Control name='hour_out' type="text" value={formData.hour_out} onChange={handleChange} />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="airport">
                     <Form.Label>Airport</Form.Label>
-                    <Form.Control type="text" value={booking.airport} />
+                    <Form.Control name='airport' type="text" value={formData.airport} onChange={handleChange}/>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="airline">
                     <Form.Label>Airline</Form.Label>
-                    <Form.Control type="text" value={booking.airline} />
+                    <Form.Control name='airline' type="text" value={formData.airline} onChange={handleChange}/>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="no_flight">
                     <Form.Label>Number Of Flight</Form.Label>
-                    <Form.Control type="text" value={booking.no_flight} />
+                    <Form.Control name='no_flight' type="text" value={formData.no_flight} onChange={handleChange}/>
                 </Form.Group>
 
-                <img src={vehicles?.image} alt="Booked car" style={{ width: '100%' }} />
-                <p>Vehicle:{vehicles?.brand}{vehicles?.model}{vehicles?.year}</p>
-                <p>Price:{vehicles?.price} per day</p>
+                <img src={vehicles?.image} alt="Booked car" style={{ width: '400px' }} />
+                <br />
+                <p>Vehicle: {vehicles?.brand} {vehicles?.model} {vehicles?.year}</p>
+                <p>Price: {vehicles?.price} per day</p>
+
+
+                <Button className='btn btn-success m-5 btn-lg' variant="primary" type="submit" >
+                            Update
+                </Button>
+
+                <Button className='btn btn-danger btn-lg m-5' variant="primary" type="button" onClick={handleDelete}>
+                            Delete
+                </Button>
+                </Form>
                 </>
 
+                
                 
             )}
         </Container>
