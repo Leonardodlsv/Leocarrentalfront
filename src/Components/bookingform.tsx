@@ -28,8 +28,8 @@ function Bookingpost() {
     });
 
     
-    const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
+    const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value

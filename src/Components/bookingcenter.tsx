@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -29,7 +29,6 @@ function GetBook (){
     }
 
     const [id_passport, setIdPassport] = useState('');
-    const [booking, setBooking] = useState<Booking | null>(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [vehicles, setVehicles] = useState<Vehicles | null>(null);
 
@@ -46,6 +45,7 @@ function GetBook (){
         hour_in: '',
         date_out: '',
         hour_out: '',
+        id_vehicles: Number(vehicles),
     });
     
 
@@ -56,8 +56,12 @@ function GetBook (){
         setIdPassport(e.target.value);
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
+    const handleIdpassportUpdateChange = (e: React.ChangeEvent<HTMLButtonElement>) => {
+        setIdPassport(e.target.value);
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value
@@ -70,33 +74,35 @@ function GetBook (){
     
         try {
             const response = await axios.get(`http://localhost:3001/booking/consult/${id_passport}`);
-            setBooking(response.data);
             setErrorMessage('');
             setVehicles(response.data.vehicles);
             setFormData(response.data);
         } catch (error) {
-            setBooking(null);
             setVehicles(null);
-            setErrorMessage('No se pudo encontrar la reserva.');
+            setErrorMessage('we can not find the booking');
         }
     };
     
-    const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleUpdate: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+        e.preventDefault();
     
-        try {
-            const response = await axios.patch(`http://localhost:3001/booking/update/${id_passport}`, formData);
-            console.log('Reserva actualizada exitosamente:', response.data);
-            setBooking(response.data);
-        } catch (error) {
-            console.error('No se pudo actualizar la reserva.', error);
-        }
+    try {
+        const response = await axios.patch(`http://localhost:3001/booking/update/${id_passport}`)
+        setVehicles(response.data.vehicles)
+        setFormData(response.data)
+    
+    } catch (error) {
+        setVehicles(null);
+        setErrorMessage('Try more later')
+    }
+        
+        
     };
 
     
     
-    const handleDelete: React.MouseEventHandler<HTMLButtonElement> = async (event) => {
-        event.preventDefault();
+    const handleDelete: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+        e.preventDefault();
     
         try {
             await axios.delete(`http://localhost:3001/booking/delete/${id_passport}`);
@@ -127,16 +133,9 @@ function GetBook (){
                         <Button variant="primary" type="submit">
                             Consultar Reserva
                         </Button>
-                    </Form>
-                    <br />
 
-                    {errorMessage && <p>{errorMessage}</p>}
-                </Col>
-            </Row>
-            {booking && (
-                <>
-                <Form onSubmit={handleUpdate}>
-                <Form.Group className="mb-3" controlId="full_name">
+
+                        <Form.Group className="mb-3" controlId="full_name">
                     <Form.Label>Full Name</Form.Label>
                     <Form.Control name='full_name' type="text" value={formData.full_name} />
                 </Form.Group>
@@ -187,19 +186,20 @@ function GetBook (){
                 <p>Price: {vehicles?.price} per day</p>
 
 
-                <Button className='btn btn-success m-5 btn-lg' variant="primary" type="submit" >
+                <Button className='btn btn-success m-5 btn-lg' variant="primary" type="button" onClick={handleUpdate} onChange={handleIdpassportUpdateChange} >
                             Update
                 </Button>
 
-                <Button className='btn btn-danger btn-lg m-5' variant="primary" type="button" onClick={handleDelete}>
+                <Button className='btn btn-danger btn-lg m-5' variant="primary" type="button" onClick={handleDelete} onChange={handleIdpassportUpdateChange}>
                             Delete
                 </Button>
-                </Form>
-                </>
+                
+                    </Form>
+                    <br />
 
-                
-                
-            )}
+                    {errorMessage && <p>{errorMessage}</p>}
+                </Col>
+            </Row>
         </Container>
     );
 }
